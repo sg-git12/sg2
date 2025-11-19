@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Simple Contact Form</title>
+  <link rel="stylesheet" href="s1.css">
+</head>
+<body>
+  <main class="card" role="main">
+    <h1>Contact / Service Request</h1>
+    <p class="lead">A minimal accessible form. Replace or wire the <code>submit</code> handler to send data to your server.</p>
+
+    <form id="simpleForm" novalidate>
+      <div>
+        <label for="name">Full name</label>
+        <input id="name" name="name" type="text" placeholder="e.g. Shashank Gowda" required />
+        <div class="small" id="nameHint">Required</div>
+      </div>
+
+      <div>
+        <label for="email">Email address</label>
+        <input id="email" name="email" type="email" placeholder="you@example.com" required />
+        <div class="small" id="emailHint">We'll only use this to reply</div>
+      </div>
+
+      <div>
+        <label for="phone">Phone (optional)</label>
+        <input id="phone" name="phone" type="tel" placeholder="+91 98765 43210" />
+      </div>
+
+      <div>
+        <label for="topic">Topic</label>
+        <select id="topic" name="topic" required>
+          <option value="">— choose —</option>
+          <option value="general">General question</option>
+          <option value="support">Support / issue</option>
+          <option value="service">Request service visit</option>
+        </select>
+      </div>
+
+      <div class="full">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" placeholder="Tell us what's up..." required></textarea>
+        <div class="small">Minimum 10 characters</div>
+      </div>
+
+      <div class="full row">
+        <input id="consent" name="consent" type="checkbox" />
+        <label for="consent" style="margin:0; font-weight:500;">I consent to having this site store my submitted info.</label>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="secondary" onclick="clearForm()">Clear</button>
+        <button type="submit">Send message</button>
+      </div>
+
+      <div id="result" class="full" aria-live="polite" style="margin-top:8px;"></div>
+    </form>
+  </main>
+
+  <script>
+    // Basic client-side validation + fake submit (no backend).
+    const form = document.getElementById('simpleForm');
+    const result = document.getElementById('result');
+
+    function validate() {
+      const name = form.name.value.trim();
+      const email = form.email.value.trim();
+      const topic = form.topic.value;
+      const message = form.message.value.trim();
+
+      if (!name) return 'Please enter your name.';
+      if (!email) return 'Please enter a valid email address.';
+      if (!topic) return 'Please choose a topic.';
+      if (message.length < 10) return 'Message should be at least 10 characters.';
+      return '';
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      result.textContent = '';
+      const error = validate();
+      if (error) {
+        result.innerHTML = '<div class="hint">' + error + '</div>';
+        return;
+      }
+
+      // Prepare data object
+      const data = {
+        name: form.name.value.trim(),
+        email: form.email.value.trim(),
+        phone: form.phone.value.trim(),
+        topic: form.topic.value,
+        message: form.message.value.trim(),
+        consent: form.consent.checked
+      };
+
+      // Replace this with a real fetch() to your backend endpoint.
+      // Example:
+      // fetch('/api/contact', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data)})
+      //   .then(...)
+      // For demo we just show the data and pretend we sent it.
+      result.innerHTML = '<strong>Sent (demo):</strong> Thank you, ' + escapeHtml(data.name) + '.';
+      console.log('Form data (demo):', data);
+
+      // Reset (optional)
+      // form.reset();
+    });
+
+    function clearForm(){
+      form.reset();
+      result.textContent = '';
+    }
+
+    // tiny HTML escape for demo output
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"
+      })[c]);
+    }
+  </script>
+</body>
+</html>
